@@ -22,8 +22,28 @@ const App: React.FC = () => {
   // Form states
   const [searchQuery, setSearchQuery] = useState("")
   const [donateItem, setDonateItem] = useState({ title: "", type: "", genre: "" })
-  const [borrowForm, setBorrowForm] = useState({ patronId: "", itemId: "", borrowDate: null, dueDate: null })
-  const [returnForm, setReturnForm] = useState({ transactionId: "", returnDate: null })
+  type BorrowForm = {
+      patronId: string
+      itemId: string
+      borrowDate: Date | undefined
+      dueDate: Date | undefined
+  }
+
+  const [borrowForm, setBorrowForm] = useState<BorrowForm>({
+      patronId: "",
+      itemId: "",
+      borrowDate: undefined,
+      dueDate: undefined,
+  })
+  type ReturnForm = {
+    transactionId: string
+    returnDate: Date | undefined
+  }
+
+  const [returnForm, setReturnForm] = useState<ReturnForm>({
+    transactionId: "",
+    returnDate: undefined,
+  })
 
   // Mock data
   const libraryItems = [
