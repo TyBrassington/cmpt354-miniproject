@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7fab4cdc-39fe-4a09-98a2-59652f0efd2a" name="Changes" comment="add: Create UI, no functionality yet">
+    <list default="true" id="7fab4cdc-39fe-4a09-98a2-59652f0efd2a" name="Changes" comment="fix: update date state types to use undefined instead of null">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/library-database/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/library-database/src/App.tsx" afterDir="false" />
     </list>
@@ -66,11 +66,20 @@
       <option name="project" value="LOCAL" />
       <updated>1743298008035</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="fix: update date state types to use undefined instead of null">
+      <option name="closed" value="true" />
+      <created>1743298404559</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1743298404559</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="add: Create UI, no functionality yet" />
-    <option name="LAST_COMMIT_MESSAGE" value="add: Create UI, no functionality yet" />
+    <MESSAGE value="fix: update date state types to use undefined instead of null" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix: update date state types to use undefined instead of null" />
   </component>
 </project>

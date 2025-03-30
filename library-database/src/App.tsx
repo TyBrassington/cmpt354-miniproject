@@ -25,8 +25,8 @@ const App: React.FC = () => {
   type BorrowForm = {
       patronId: string
       itemId: string
-      borrowDate: Date | undefined
-      dueDate: Date | undefined
+      borrowDate: undefined
+      dueDate: undefined
   }
 
   const [borrowForm, setBorrowForm] = useState<BorrowForm>({
@@ -37,7 +37,7 @@ const App: React.FC = () => {
   })
   type ReturnForm = {
     transactionId: string
-    returnDate: Date | undefined
+    returnDate: undefined
   }
 
   const [returnForm, setReturnForm] = useState<ReturnForm>({
