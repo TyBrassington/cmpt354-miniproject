@@ -5,7 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7fab4cdc-39fe-4a09-98a2-59652f0efd2a" name="Changes" comment="fix: replace null with undefined for date fields">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/library-database/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/library-database/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/library-database/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/library-database/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/library-database/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/library-database/src/App.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/library-database/src/components/Header.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/library-database/src/components/Header.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

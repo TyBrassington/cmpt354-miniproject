@@ -9,7 +9,7 @@ const Header: React.FC = () => {
       <div className="container mx-auto flex justify-between items-center">
         <h1 className="text-2xl font-bold">Library Database Application</h1>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm">Login</Button>
+          <Button variant="secondary" size="sm">Login</Button>
           <Button variant="secondary" size="sm">Sign Up</Button>
         </div>
       </div>

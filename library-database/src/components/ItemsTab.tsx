@@ -10,11 +10,15 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge"
 
 type LibraryItem = {
-  id: string
+  itemID: string
   title: string
   type: string
   genre: string
-  status: string
+  authorArtist: string
+  publisher: string
+  publicationDate: string
+  isbnIssn: string
+  availabilityStatus: string
 }
 
 interface ItemsTabProps {
@@ -32,8 +36,8 @@ const ItemsTab: React.FC<ItemsTabProps> = ({ libraryItems }) => {
   }
 
   return (
-    <div className="grid md:grid-cols-[1fr_2fr] gap-6">
-      <div className="space-y-6">
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
             <CardTitle>Find an Item</CardTitle>
@@ -72,7 +76,6 @@ const ItemsTab: React.FC<ItemsTabProps> = ({ libraryItems }) => {
                   required
                 />
               </div>
-
               <div className="space-y-2">
                 <Label htmlFor="type">Item Type</Label>
                 <Select value={donateItem.type} onValueChange={(value) => setDonateItem({ ...donateItem, type: value })}>
@@ -87,7 +90,6 @@ const ItemsTab: React.FC<ItemsTabProps> = ({ libraryItems }) => {
                   </SelectContent>
                 </Select>
               </div>
-
               <div className="space-y-2">
                 <Label htmlFor="genre">Genre</Label>
                 <Input
@@ -96,7 +98,6 @@ const ItemsTab: React.FC<ItemsTabProps> = ({ libraryItems }) => {
                   onChange={(e) => setDonateItem({ ...donateItem, genre: e.target.value })}
                 />
               </div>
-
               <Button type="submit" className="w-full">Donate</Button>
             </form>
           </CardContent>
@@ -113,23 +114,31 @@ const ItemsTab: React.FC<ItemsTabProps> = ({ libraryItems }) => {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>ID</TableHead>
+                  <TableHead>Item ID</TableHead>
                   <TableHead>Title</TableHead>
                   <TableHead>Type</TableHead>
                   <TableHead>Genre</TableHead>
+                  <TableHead>Author/Artist</TableHead>
+                  <TableHead>Publisher</TableHead>
+                  <TableHead>Publication Date</TableHead>
+                  <TableHead>ISBN/ISSN</TableHead>
                   <TableHead>Status</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {libraryItems.map((item) => (
-                  <TableRow key={item.id}>
-                    <TableCell>{item.id}</TableCell>
+                  <TableRow key={item.itemID}>
+                    <TableCell>{item.itemID}</TableCell>
                     <TableCell>{item.title}</TableCell>
                     <TableCell>{item.type}</TableCell>
                     <TableCell>{item.genre}</TableCell>
+                    <TableCell>{item.authorArtist}</TableCell>
+                    <TableCell>{item.publisher}</TableCell>
+                    <TableCell>{item.publicationDate}</TableCell>
+                    <TableCell>{item.isbnIssn}</TableCell>
                     <TableCell>
-                      <Badge variant={item.status === "Available" ? "default" : "secondary"}>
-                        {item.status}
+                      <Badge variant={item.availabilityStatus === "Available" ? "default" : "secondary"}>
+                        {item.availabilityStatus}
                       </Badge>
                     </TableCell>
                   </TableRow>

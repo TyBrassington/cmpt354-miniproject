@@ -1,24 +1,12 @@
 import sqlite3
 import datetime
 
-# Connect to SQLite database
-conn = sqlite3.connect('library.db')
-conn.execute("PRAGMA foreign_keys = ON")  # Enforce foreign key constraints
-cursor = conn.cursor()
 
-# ---------------------- MENU ----------------------
-def menu():
-    print("\n--- Library Menu ---")
-    print("0. Register as a new patron")
-    print("1. Find an item")
-    print("2. Borrow an item")
-    print("3. Return an item")
-    print("4. Donate an item")
-    print("5. Find events")
-    print("6. Register for an event")
-    print("7. Volunteer")
-    print("8. Ask for help")
-    print("9. Exit")
+def get_db_connection():
+    conn = sqlite3.connect('library.db')
+    conn.execute("PRAGMA foreign_keys = ON")  # Enforce foreign key constraints
+    conn.row_factory = sqlite3.Row  # lets us use column names
+    return conn
 
 # ---------------------- REGISTER PATRON ----------------------
 def register_patron():

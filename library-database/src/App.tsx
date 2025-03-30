@@ -4,7 +4,6 @@ import React, { useState } from "react"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
-// Import our new components
 import Header from "@/components/Header"
 import HomeTab from "@/components/HomeTab"
 import ItemsTab from "@/components/ItemsTab"
@@ -15,12 +14,11 @@ import AssistanceTab from "@/components/AssistanceTab"
 const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState("home")
 
-  // Static data – you can also move this to its own module if needed.
   const libraryItems = [
-    { id: "B001", title: "The Great Gatsby", type: "Book", genre: "Fiction", status: "Available" },
-    { id: "B002", title: "To Kill a Mockingbird", type: "Book", genre: "Fiction", status: "Borrowed" },
-    { id: "D001", title: "Planet Earth", type: "DVD", genre: "Documentary", status: "Available" },
-    { id: "M001", title: "Introduction to Python", type: "Magazine", genre: "Technology", status: "Available" },
+    { id: "B001", title: "The Great Gatsby", type: "Book", genre: "Fiction", availabilityStatus: "Available" },
+    { id: "B002", title: "To Kill a Mockingbird", type: "Book", genre: "Fiction", availabilityStatus: "Borrowed" },
+    { id: "D001", title: "Planet Earth", type: "DVD", genre: "Documentary", availabilityStatus: "Available" },
+    { id: "M001", title: "Introduction to Python", type: "Magazine", genre: "Technology", availabilityStatus: "Available" },
   ]
 
   const upcomingEvents = [
@@ -30,7 +28,7 @@ const App: React.FC = () => {
   ]
 
   return (
-    <ThemeProvider defaultTheme="system" storageKey="library-ui-theme">
+    <ThemeProvider defaultTheme="dark" storageKey="library-ui-theme">
       <div className="min-h-screen bg-background text-foreground">
         <Header />
         <main className="container mx-auto p-4">
