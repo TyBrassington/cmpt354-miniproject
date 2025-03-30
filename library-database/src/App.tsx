@@ -15,11 +15,52 @@ const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState("home")
 
   const libraryItems = [
-    { id: "B001", title: "The Great Gatsby", type: "Book", genre: "Fiction", availabilityStatus: "Available" },
-    { id: "B002", title: "To Kill a Mockingbird", type: "Book", genre: "Fiction", availabilityStatus: "Borrowed" },
-    { id: "D001", title: "Planet Earth", type: "DVD", genre: "Documentary", availabilityStatus: "Available" },
-    { id: "M001", title: "Introduction to Python", type: "Magazine", genre: "Technology", availabilityStatus: "Available" },
+    {
+      itemID: "B001",
+      title: "The Great Gatsby",
+      type: "Book",
+      genre: "Fiction",
+      authorArtist: "F. Scott Fitzgerald",
+      publisher: "Scribner",
+      publicationDate: "1925-04-10",
+      isbnIssn: "9780743273565",
+      availabilityStatus: "Available"
+    },
+    {
+      itemID: "B002",
+      title: "To Kill a Mockingbird",
+      type: "Book",
+      genre: "Fiction",
+      authorArtist: "Harper Lee",
+      publisher: "J. B. Lippincott & Co.",
+      publicationDate: "1960-07-11",
+      isbnIssn: "9780061120084",
+      availabilityStatus: "Borrowed"
+    },
+    {
+      itemID: "D001",
+      title: "Planet Earth",
+      type: "DVD",
+      genre: "Documentary",
+      authorArtist: "BBC",
+      publisher: "BBC Worldwide",
+      publicationDate: "2006-03-22",
+      isbnIssn: "N/A",
+      availabilityStatus: "Available"
+    },
+    {
+      itemID: "M001",
+      title: "Introduction to Python",
+      type: "Magazine",
+      genre: "Technology",
+      authorArtist: "Python Press",
+      publisher: "Python Inc.",
+      publicationDate: "2020-01-01",
+      isbnIssn: "ISSN0001",
+      availabilityStatus: "Available"
+    }
   ]
+  
 
   const upcomingEvents = [
     { id: "E001", title: "Book Club Meeting", date: "April 15, 2025", time: "6:00 PM", location: "Main Hall" },
