@@ -25,8 +25,8 @@ const App: React.FC = () => {
   type BorrowForm = {
       patronId: string
       itemId: string
-      borrowDate: undefined
-      dueDate: undefined
+      borrowDate: Date | undefined
+      dueDate: Date | undefined
   }
 
   const [borrowForm, setBorrowForm] = useState<BorrowForm>({
@@ -37,7 +37,7 @@ const App: React.FC = () => {
   })
   type ReturnForm = {
     transactionId: string
-    returnDate: undefined
+    returnDate: Date | undefined
   }
 
   const [returnForm, setReturnForm] = useState<ReturnForm>({
@@ -74,7 +74,7 @@ const App: React.FC = () => {
   const handleBorrowSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     alert(`Borrow request submitted for Patron ID: ${borrowForm.patronId}, Item ID: ${borrowForm.itemId}`)
-    setBorrowForm({ patronId: "", itemId: "", borrowDate: null, dueDate: null })
+    setBorrowForm({ patronId: "", itemId: "", borrowDate: undefined, dueDate: undefined })
   }
 
   return (
