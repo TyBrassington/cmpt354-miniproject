@@ -5,15 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7fab4cdc-39fe-4a09-98a2-59652f0efd2a" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/cmpt354_miniproject.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/library.db" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/library_app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/library-database/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/library-database/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/library-database/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/library-database/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/library-database/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/library-database/src/App.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/library-database/src/main.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/library-database/src/main.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -23,6 +19,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "TyBrassington"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/TyBrassington/cmpt354-miniproject.git",
+    "accountId": "936c7207-d791-442b-8e07-a3e8035a01b7"
+  }
+}]]></component>
   <component name="ProjectColorInfo"><![CDATA[{
   "associatedIndex": 0
 }]]></component>
