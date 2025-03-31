@@ -27,6 +27,8 @@ This command executes two processes:
 
 - **Flask:** Runs the Python backend from the root directory.
 
+**Note:** Please make sure you do not have any processes such as Jupyter Notebook open on Port 5000
+
 ## For macOS/Linux Users
 If you experience issues with the Python command on macOS or Linux, modify the `package.json` file in the `library-database` directory:
 Open `package.json` and locate the **scripts** section.
