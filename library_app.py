@@ -46,7 +46,7 @@ def find_item():
     cursor.execute("""
         SELECT *
         FROM Library_Item
-        WHERE title LIKE ? OR genre LIKE ?
+        WHERE title LIKE ? OR genre LIKE ? OR authorArtist LIKE ?
     """, (f'%{keyword}%', f'%{keyword}%'))
     items = cursor.fetchall()
     conn.close()
