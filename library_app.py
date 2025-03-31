@@ -1,10 +1,12 @@
 import sqlite3
 import datetime
 from flask import Flask, request, jsonify
-from flask_cors import  CORS
+from flask_cors import CORS
+
 
 app = Flask(__name__)
 CORS(app)
+
 
 def get_db_connection():
     conn = sqlite3.connect('library.db')
@@ -42,7 +44,7 @@ def find_item():
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute("""
-        SELECT itemID, title, type, genre, availabilityStatus
+        SELECT *
         FROM Library_Item
         WHERE title LIKE ? OR genre LIKE ?
     """, (f'%{keyword}%', f'%{keyword}%'))
@@ -142,22 +144,43 @@ def donate_item():
     title = data.get('title')
     item_type = data.get('type')
     genre = data.get('genre')
-    
+    authorArtist = data.get('authorArtist')
+    publisher = data.get('publisher')
+    publicationDate = data.get('publicationDate')
+    isbnIssn = data.get('isbnIssn')
+    availabilityStatus = "Available"  # default val
+
     conn = get_db_connection()
     cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT itemID FROM Library_Item
+        WHERE itemID LIKE 'L%' 
+        ORDER BY itemID DESC LIMIT 1
+    """)
+    row = cursor.fetchone()
+    if row:
+        last_id = row['itemID']
+        next_num = int(last_id[1:]) + 1
+        next_itemID = "L" + str(next_num).zfill(3)
+    else:
+        next_itemID = "L001"
+
     try:
         cursor.execute("""
-            INSERT INTO Library_Item (title, type, genre, availabilityStatus)
-            VALUES (?, ?, ?, 'Available')
-        """, (title, item_type, genre))
+            INSERT INTO Library_Item (itemID, title, type, genre, authorArtist, publisher, publicationDate, isbnIssn, availabilityStatus)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (
+        next_itemID, title, item_type, genre, authorArtist, publisher, publicationDate, isbnIssn, availabilityStatus))
         conn.commit()
     except Exception as e:
         conn.rollback()
         conn.close()
         return jsonify({'error': str(e)}), 400
-        
+
     conn.close()
-    return jsonify({'message': f'Item "{title}" donated successfully'}), 200
+    return jsonify({'message': f'Item "{title}" donated successfully with ID {next_itemID}'}), 200
+
 
 # ---------------------- PLACEHOLDER ENDPOINTS ----------------------
 @app.route('/find_event', methods=['GET'])

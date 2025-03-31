@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -21,22 +21,89 @@ type LibraryItem = {
   availabilityStatus: string
 }
 
-interface ItemsTabProps {
-  libraryItems: LibraryItem[]
+const ItemsTab: React.FC = () => {
+  const [searchQuery, setSearchQuery] = useState("")
+  const [donateItem, setDonateItem] = useState({
+    title: "",
+    type: "",
+    genre: "",
+    authorArtist: "",
+    publisher: "",
+    publicationDate: "",
+    isbnIssn: ""
+  })
+  const [libraryItemsData, setLibraryItemsData] = useState<LibraryItem[]>([])
+
+  const fetchItems = async (keyword: string = "") => {
+    try {
+      const response = await fetch(
+        `http://localhost:5000/find_item?keyword=${encodeURIComponent(keyword)}`
+      )
+      if (response.ok) {
+        const data = await response.json()
+        setLibraryItemsData(data)
+      } else {
+        console.error("Search failed with status:", response.status)
+      }
+    } catch (error) {
+      console.error("Error during search:", error)
+    }
+  }
+
+  useEffect(() => {
+    fetchItems("")
+  }, [])
+
+  const handleSearch = async (e: React.FormEvent) => {
+    e.preventDefault()
+    fetchItems(searchQuery)
+  }
+
+const handleDonateSubmit = async (e: React.FormEvent) => {
+  e.preventDefault()
+
+  try {
+    const response = await fetch("http://localhost:5000/donate_item", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        title: donateItem.title,
+        type: donateItem.type,
+        genre: donateItem.genre,
+        authorArtist: donateItem.authorArtist,
+        publisher: donateItem.publisher,
+        publicationDate: donateItem.publicationDate,
+        isbnIssn: donateItem.isbnIssn,
+      }),
+    })
+    const result = await response.json()
+    if (response.ok) {
+      alert(`Donation successful: ${result.message}`)
+      fetchItems("")
+    } else {
+      alert(`Donation failed: ${result.error}`)
+    }
+    setDonateItem({
+      title: "",
+      type: "",
+      genre: "",
+      authorArtist: "",
+      publisher: "",
+      publicationDate: "",
+      isbnIssn: ""
+    })
+  } catch (error) {
+    console.error("Error during donation:", error)
+    alert("An error occurred during donation.")
+  }
 }
 
-const ItemsTab: React.FC<ItemsTabProps> = ({ libraryItems }) => {
-  const [searchQuery, setSearchQuery] = useState("")
-  const [donateItem, setDonateItem] = useState({ title: "", type: "", genre: "" })
-
-  const handleDonateSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    alert(`Item "${donateItem.title}" has been added to donation queue!`)
-    setDonateItem({ title: "", type: "", genre: "" })
-  }
 
   return (
     <div className="space-y-6">
+      {/* Top row: Find an Item and Donate an Item */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
@@ -44,19 +111,21 @@ const ItemsTab: React.FC<ItemsTabProps> = ({ libraryItems }) => {
             <CardDescription>Search our collection</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="flex flex-col space-y-2">
-              <Label htmlFor="search">Search by title, author, or keyword</Label>
-              <div className="flex gap-2">
-                <Input
-                  id="search"
-                  type="text"
-                  placeholder="Enter search terms"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-                <Button type="submit">Search</Button>
+            <form onSubmit={handleSearch}>
+              <div className="flex flex-col space-y-2">
+                <Label htmlFor="search">Search by title or genre</Label>
+                <div className="flex gap-2">
+                  <Input
+                    id="search"
+                    type="text"
+                    placeholder="Enter search terms"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                  <Button type="submit">Search</Button>
+                </div>
               </div>
-            </div>
+            </form>
           </CardContent>
         </Card>
 
@@ -78,7 +147,10 @@ const ItemsTab: React.FC<ItemsTabProps> = ({ libraryItems }) => {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="type">Item Type</Label>
-                <Select value={donateItem.type} onValueChange={(value) => setDonateItem({ ...donateItem, type: value })}>
+                <Select
+                  value={donateItem.type}
+                  onValueChange={(value) => setDonateItem({ ...donateItem, type: value })}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select type" />
                   </SelectTrigger>
@@ -96,9 +168,49 @@ const ItemsTab: React.FC<ItemsTabProps> = ({ libraryItems }) => {
                   id="genre"
                   value={donateItem.genre}
                   onChange={(e) => setDonateItem({ ...donateItem, genre: e.target.value })}
+                  required
                 />
               </div>
-              <Button type="submit" className="w-full">Donate</Button>
+              <div className="space-y-2">
+                <Label htmlFor="authorArtist">Author/Artist</Label>
+                <Input
+                  id="authorArtist"
+                  value={donateItem.authorArtist}
+                  onChange={(e) => setDonateItem({ ...donateItem, authorArtist: e.target.value })}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="publisher">Publisher</Label>
+                <Input
+                  id="publisher"
+                  value={donateItem.publisher}
+                  onChange={(e) => setDonateItem({ ...donateItem, publisher: e.target.value })}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="publicationDate">Publication Date</Label>
+                <Input
+                  id="publicationDate"
+                  type="date"
+                  value={donateItem.publicationDate}
+                  onChange={(e) => setDonateItem({ ...donateItem, publicationDate: e.target.value })}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="isbnIssn">ISBN/ISSN</Label>
+                <Input
+                  id="isbnIssn"
+                  value={donateItem.isbnIssn}
+                  onChange={(e) => setDonateItem({ ...donateItem, isbnIssn: e.target.value })}
+                  required
+                />
+              </div>
+              <Button type="submit" className="w-full">
+                Donate
+              </Button>
             </form>
           </CardContent>
         </Card>
@@ -126,7 +238,7 @@ const ItemsTab: React.FC<ItemsTabProps> = ({ libraryItems }) => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {libraryItems.map((item) => (
+                {libraryItemsData.map((item) => (
                   <TableRow key={item.itemID}>
                     <TableCell>{item.itemID}</TableCell>
                     <TableCell>{item.title}</TableCell>
