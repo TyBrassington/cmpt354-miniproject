@@ -1,11 +1,14 @@
 import sqlite3
 import datetime
-from flask import Flask, request, jsonify
+import os
+from flask import Flask, request, jsonify, session
 from flask_cors import CORS
 
 
 app = Flask(__name__)
 CORS(app)
+app.secret_key = os.environ.get("FLASK_SECRET_KEY", os.urandom(24))
+
 
 
 def get_db_connection():
@@ -14,29 +17,91 @@ def get_db_connection():
     conn.row_factory = sqlite3.Row  # lets us use column names
     return conn
 
-# ---------------------- REGISTER PATRON ----------------------
-# def register_patron():
-#     print("\n--- Register as a New Patron ---")
-#     patron_id = input("Enter your Patron ID (or type 'back' to return): ")
-#     if patron_id.lower() == 'back':
-#         return
+# ---------------------- REGISTER PATRON & AUTO LOGIN ----------------------
+@app.route('/register', methods=['POST'])
+def register():
+    data = request.get_json()
+    first_name = data.get('firstName')
+    last_name = data.get('lastName')
+    contact = data.get('contact')
+    email = data.get('email')
+    membership_date = datetime.date.today().isoformat()
 
-#     first_name = input("First Name: ")
-#     last_name = input("Last Name: ")
-#     contact = input("Contact Info (e.g., phone or email): ")
-#     membership_date = input("Membership Date (YYYY-MM-DD): ")
-#     email = input("Email Address: ")
+    conn = get_db_connection()
+    cursor = conn.cursor()
 
-#     try:
-#         cursor.execute("""
-#             INSERT INTO Patron (patronID, firstName, lastName, contactInfo, membershipDate, email)
-#             VALUES (?, ?, ?, ?, ?, ?)
-#         """, (patron_id, first_name, last_name, contact, membership_date, email))
-#         conn.commit()
-#         print("Patron registered successfully.")
-#     except Exception as e:
-#         print("Error registering patron:", e)
+    cursor.execute("SELECT * FROM Patron WHERE email = ?", (email,))
+    if cursor.fetchone():
+        conn.close()
+        return jsonify({'error': 'A patron with this email already exists.'}), 400
 
+    cursor.execute("SELECT patronID FROM Patron WHERE patronID LIKE 'P%' ORDER BY patronID DESC LIMIT 1")
+    row = cursor.fetchone()
+    if row:
+        last_patron_id = row['patronID']
+        new_number = int(last_patron_id[1:]) + 1
+        new_patron_id = "P" + str(new_number).zfill(3)
+    else:
+        new_patron_id = "P001"
+
+    try:
+        cursor.execute("""
+            INSERT INTO Patron (patronID, firstName, lastName, contactInfo, membershipDate, email)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, (new_patron_id, first_name, last_name, contact, membership_date, email))
+        conn.commit()
+    except Exception as e:
+        conn.rollback()
+        conn.close()
+        return jsonify({'error': str(e)}), 400
+
+    conn.close()
+
+    session['patronID'] = new_patron_id
+    return jsonify({'message': 'Registration successful', 'patronID': new_patron_id}), 200
+
+
+# ---------------------- LOGIN (using Patron ID or email) ----------------------
+@app.route('/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    patron_id = data.get('patronID')
+    email = data.get('email')
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    if patron_id:
+        cursor.execute("SELECT * FROM Patron WHERE patronID = ?", (patron_id,))
+    elif email:
+        cursor.execute("SELECT * FROM Patron WHERE email = ?", (email,))
+    else:
+        conn.close()
+        return jsonify({'error': 'No Patron ID or email provided'}), 400
+
+    patron = cursor.fetchone()
+    conn.close()
+
+    if not patron:
+        return jsonify({'error': 'Patron not found'}), 404
+
+    session['patronID'] = patron['patronID']
+    return jsonify({
+        'message': 'Login successful',
+        'patronID': patron['patronID'],
+        'firstName': patron['firstName'],
+        'lastName': patron['lastName']
+    }), 200
+
+# ---------------------- CHECK SESSION (to verify login status) ----------------------
+@app.route('/check_session', methods=['GET'])
+def check_session():
+    patron_id = session.get('patronID')
+    if patron_id:
+        return jsonify({'loggedIn': True, 'patronID': patron_id}), 200
+    else:
+        return jsonify({'loggedIn': False}), 200
+    
 # ---------------------- FIND ITEM ----------------------
 @app.route('/find_item', methods=['GET'])
 def find_item():
@@ -65,7 +130,6 @@ def borrow_item():
     conn = get_db_connection()
     cursor = conn.cursor()
     
-    # Validate Patron ID
     cursor.execute("SELECT * FROM Patron WHERE patronID = ?", (patron_id,))
     if not cursor.fetchone():
         conn.close()
