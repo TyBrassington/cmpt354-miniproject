@@ -93,15 +93,35 @@ def login():
         'lastName': patron['lastName']
     }), 200
 
-# ---------------------- CHECK SESSION (to verify login status) ----------------------
+# ---------------------- CHECK SESSION TO VERIFY LOGIN STATUS ----------------------
 @app.route('/check_session', methods=['GET'])
 def check_session():
     patron_id = session.get('patronID')
     if patron_id:
-        return jsonify({'loggedIn': True, 'patronID': patron_id}), 200
-    else:
-        return jsonify({'loggedIn': False}), 200
-    
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT firstName, lastName FROM Patron WHERE patronID = ?", (patron_id,))
+        patron = cursor.fetchone()
+        conn.close()
+
+        if patron:
+            return jsonify({
+                'loggedIn': True,
+                'patronID': patron_id,
+                'firstName': patron['firstName'],
+                'lastName': patron['lastName']
+            }), 200
+
+    return jsonify({'loggedIn': False}), 200
+
+# ---------------------- LOGOUT ----------------------
+@app.route('/logout', methods=['POST'])
+def logout():
+    session.clear()
+    response = jsonify({'message': 'Logged out successfully'})
+    response.set_cookie('session', '', expires=0)
+    return response, 200
+
 # ---------------------- FIND ITEM ----------------------
 @app.route('/find_item', methods=['GET'])
 def find_item():
@@ -203,7 +223,19 @@ def return_item():
         
     conn.close()
     return jsonify({'message': 'Item successfully returned'}), 200
-
+# ---------------------- GET TRANSACTIONS ----------------------
+@app.route('/get_transactions', methods=['GET'])
+def get_transactions():
+    patron_id = session.get('patronID')
+    if not patron_id:
+        return jsonify({'error': 'Not logged in'}), 401
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM Borrowing_Transaction WHERE patronID = ? AND returnDate IS NULL", (patron_id,))
+    rows = cursor.fetchall()
+    conn.close()
+    result = [dict(row) for row in rows]
+    return jsonify(result), 200
 # ---------------------- DONATE ITEM ----------------------
 @app.route('/donate_item', methods=['POST'])
 def donate_item():

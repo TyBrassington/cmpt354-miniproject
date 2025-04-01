@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -15,15 +15,31 @@ import { Label } from "@/components/ui/label"
 
 const Header: React.FC = () => {
   const [patronID, setPatronID] = useState<string | null>(null)
+  const [firstName, setFirstName] = useState("")
+  const [lastName, setLastName] = useState("")
 
   const [loginOpen, setLoginOpen] = useState(false)
   const [loginInput, setLoginInput] = useState("")
-
   const [signupOpen, setSignupOpen] = useState(false)
-  const [firstName, setFirstName] = useState("")
-  const [lastName, setLastName] = useState("")
+  const [signupFirstName, setSignupFirstName] = useState("")
+  const [signupLastName, setSignupLastName] = useState("")
   const [contact, setContact] = useState("")
   const [email, setEmail] = useState("")
+
+  useEffect(() => {
+    fetch("http://localhost:5000/check_session", { credentials: "include" })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.loggedIn) {
+          setPatronID(data.patronID)
+          if (data.firstName) setFirstName(data.firstName)
+          if (data.lastName) setLastName(data.lastName)
+        } else {
+          setPatronID(null)
+        }
+      })
+      .catch((error) => console.error("Error checking session:", error))
+  }, [])
 
   const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -62,8 +78,8 @@ const Header: React.FC = () => {
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify({
-          firstName,
-          lastName,
+          firstName: signupFirstName,
+          lastName: signupLastName,
           contact,
           email,
         }),
@@ -72,6 +88,8 @@ const Header: React.FC = () => {
       if (response.ok) {
         alert(`Registration successful! Your Patron ID is ${data.patronID}`)
         setPatronID(data.patronID)
+        setFirstName(signupFirstName)
+        setLastName(signupLastName)
         setSignupOpen(false)
       } else {
         alert(data.error)
@@ -82,10 +100,22 @@ const Header: React.FC = () => {
     }
   }
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await fetch("http://localhost:5000/logout", {
+        method: "POST",
+        credentials: "include",
+      })
+    } catch (err) {
+      console.error("Logout failed", err)
+    }
+  
     setPatronID(null)
+    setFirstName("")
+    setLastName("")
     alert("Logged out")
   }
+  
 
   return (
     <header className="p-4 bg-primary text-primary-foreground">
@@ -143,8 +173,8 @@ const Header: React.FC = () => {
                       <Label htmlFor="firstName">First Name</Label>
                       <Input
                         id="firstName"
-                        value={firstName}
-                        onChange={(e) => setFirstName(e.target.value)}
+                        value={signupFirstName}
+                        onChange={(e) => setSignupFirstName(e.target.value)}
                         required
                       />
                     </div>
@@ -152,8 +182,8 @@ const Header: React.FC = () => {
                       <Label htmlFor="lastName">Last Name</Label>
                       <Input
                         id="lastName"
-                        value={lastName}
-                        onChange={(e) => setLastName(e.target.value)}
+                        value={signupLastName}
+                        onChange={(e) => setSignupLastName(e.target.value)}
                         required
                       />
                     </div>
