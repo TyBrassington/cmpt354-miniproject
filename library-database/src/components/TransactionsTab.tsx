@@ -259,6 +259,7 @@ const TransactionsTab: React.FC = () => {
                     <td className="p-2">{tx.borrowDate ? format(new Date(tx.borrowDate), "PPP") : "-"}</td>
                     <td className="p-2">{tx.dueDate ? format(new Date(tx.dueDate), "PPP") : "-"}</td>
                     <td className="p-2">{tx.returnDate ? format(new Date(tx.returnDate), "PPP") : "-"}</td>
+                    <td className="p-2">{tx.fineAmount}</td>
                   </tr>
                 ))}
               </tbody>
