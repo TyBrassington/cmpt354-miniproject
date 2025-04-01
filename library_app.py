@@ -166,7 +166,7 @@ def borrow_item():
         conn.close()
         return jsonify({'error': 'Item is not available.'}), 400
     
-    transaction_id = "T" + datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+    transaction_id = "T" + item_id.lstrip("L") + datetime.datetime.now().strftime("%Y%m%d%H%M%S")
     
     try:
         cursor.execute("""

@@ -225,6 +225,7 @@ const TransactionsTab: React.FC = () => {
                   </PopoverContent>
                 </Popover>
               </div>
+              <div className="h-[58px]" />
               <Button type="submit" className="w-full">Return</Button>
             </form>
           </CardContent>
