@@ -6,7 +6,7 @@ from flask_cors import CORS
 
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, supports_credentials=True)
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", os.urandom(24))
 
 
@@ -121,8 +121,10 @@ def find_item():
 # ---------------------- BORROW ITEM ----------------------
 @app.route('/borrow_item', methods=['POST'])
 def borrow_item():
+    patron_id = session.get('patronID')
+    if not patron_id:
+        return jsonify({'error': 'Not logged in'}), 401
     data = request.get_json()
-    patron_id = data.get('patronId')
     item_id = data.get('itemId')
     borrow_date = data.get('borrowDate')
     due_date = data.get('dueDate')
@@ -166,6 +168,7 @@ def borrow_item():
 # ---------------------- RETURN ITEM ----------------------
 @app.route('/return_item', methods=['POST'])
 def return_item():
+
     data = request.get_json()
     transaction_id = data.get('transactionId')
     return_date = data.get('returnDate')

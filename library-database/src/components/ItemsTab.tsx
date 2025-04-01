@@ -60,7 +60,17 @@ const ItemsTab: React.FC = () => {
   }
 
   useEffect(() => {
+    // Initial fetch
     fetchItems("")
+
+    // Add event listener for re-fetching items when they are updated
+    const handleItemsUpdated = () => {
+      fetchItems("")
+    }
+    window.addEventListener('itemsUpdated', handleItemsUpdated)
+    return () => {
+      window.removeEventListener('itemsUpdated', handleItemsUpdated)
+    }
   }, [])
 
   const handleSearch = async (e: React.FormEvent) => {
@@ -68,51 +78,49 @@ const ItemsTab: React.FC = () => {
     fetchItems(searchQuery)
   }
 
-const handleDonateSubmit = async (e: React.FormEvent) => {
-  e.preventDefault()
-
-  try {
-    const response = await fetch("http://localhost:5000/donate_item", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        title: donateItem.title,
-        type: donateItem.type,
-        genre: donateItem.genre,
-        authorArtist: donateItem.authorArtist,
-        publisher: donateItem.publisher,
-        publicationDate: donateItem.publicationDate,
-        isbnIssn: donateItem.isbnIssn,
-      }),
-    })
-    const result = await response.json()
-    if (response.ok) {
-      alert(`Donation successful: ${result.message}`)
-      fetchItems("")
-    } else {
-      alert(`Donation failed: ${result.error}`)
+  const handleDonateSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    try {
+      const response = await fetch("http://localhost:5000/donate_item", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title: donateItem.title,
+          type: donateItem.type,
+          genre: donateItem.genre,
+          authorArtist: donateItem.authorArtist,
+          publisher: donateItem.publisher,
+          publicationDate: donateItem.publicationDate,
+          isbnIssn: donateItem.isbnIssn,
+        }),
+      })
+      const result = await response.json()
+      if (response.ok) {
+        alert(`Donation successful: ${result.message}`)
+        fetchItems("")
+      } else {
+        alert(`Donation failed: ${result.error}`)
+      }
+      setDonateItem({
+        title: "",
+        type: "",
+        genre: "",
+        authorArtist: "",
+        publisher: "",
+        publicationDate: "",
+        isbnIssn: ""
+      })
+    } catch (error) {
+      console.error("Error during donation:", error)
+      alert("An error occurred during donation.")
     }
-    setDonateItem({
-      title: "",
-      type: "",
-      genre: "",
-      authorArtist: "",
-      publisher: "",
-      publicationDate: "",
-      isbnIssn: ""
-    })
-  } catch (error) {
-    console.error("Error during donation:", error)
-    alert("An error occurred during donation.")
   }
-}
 
 
 return (
   <div className="space-y-6">
-    {/* Top row: Find an Item and Donate an Item */}
     <div className="grid grid-cols-1 gap-6">
       <Card>
         <CardHeader>

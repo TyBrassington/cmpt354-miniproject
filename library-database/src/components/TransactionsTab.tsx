@@ -11,7 +11,6 @@ import { Calendar } from "@/components/ui/calendar"
 import { CalendarIcon } from "lucide-react"
 
 type BorrowForm = {
-  patronId: string
   itemId: string
   borrowDate: Date | undefined
   dueDate: Date | undefined
@@ -24,7 +23,6 @@ type ReturnForm = {
 
 const TransactionsTab: React.FC = () => {
   const [borrowForm, setBorrowForm] = useState<BorrowForm>({
-    patronId: "",
     itemId: "",
     borrowDate: undefined,
     dueDate: undefined,
@@ -35,15 +33,56 @@ const TransactionsTab: React.FC = () => {
     returnDate: undefined,
   })
 
-  const handleBorrowSubmit = (e: React.FormEvent) => {
+  const handleBorrowSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    alert(`Borrow request submitted for Patron ID: ${borrowForm.patronId}, Item ID: ${borrowForm.itemId}`)
-    setBorrowForm({ patronId: "", itemId: "", borrowDate: undefined, dueDate: undefined })
+    try {
+      const response = await fetch("http://localhost:5000/borrow_item", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          itemId: borrowForm.itemId,
+          borrowDate: borrowForm.borrowDate,
+          dueDate: borrowForm.dueDate,
+        }),
+      })
+      const data = await response.json()
+      if (response.ok) {
+        alert(`Borrow successful! Transaction ID: ${data.transactionId}`)
+        window.dispatchEvent(new Event('itemsUpdated'))
+        window.dispatchEvent(new Event('itemsUpdated'))
+      } else {
+        alert(data.error)
+      }
+    } catch (error) {
+      console.error("Error borrowing item:", error)
+      alert("An error occurred while borrowing the item.")
+    }
+    setBorrowForm({ itemId: "", borrowDate: undefined, dueDate: undefined })
   }
 
-  const handleReturnSubmit = (e: React.FormEvent) => {
+  const handleReturnSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    alert(`Return request submitted for Transaction ID: ${returnForm.transactionId}`)
+    try {
+      const response = await fetch("http://localhost:5000/return_item", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          transactionId: returnForm.transactionId,
+          returnDate: returnForm.returnDate,
+        }),
+      })
+      const data = await response.json()
+      if (response.ok) {
+        alert("Return successful!")
+      } else {
+        alert(data.error)
+      }
+    } catch (error) {
+      console.error("Error returning item:", error)
+      alert("An error occurred while returning the item.")
+    }
     setReturnForm({ transactionId: "", returnDate: undefined })
   }
 
@@ -56,16 +95,7 @@ const TransactionsTab: React.FC = () => {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleBorrowSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="patronId">Patron ID</Label>
-              <Input
-                id="patronId"
-                value={borrowForm.patronId}
-                onChange={(e) => setBorrowForm({ ...borrowForm, patronId: e.target.value })}
-                required
-              />
-            </div>
-
+            {/* Removed the Patron ID input */}
             <div className="space-y-2">
               <Label htmlFor="itemId">Item ID</Label>
               <Input
@@ -75,7 +105,6 @@ const TransactionsTab: React.FC = () => {
                 required
               />
             </div>
-
             <div className="space-y-2">
               <Label>Borrow Date</Label>
               <Popover>
@@ -95,7 +124,6 @@ const TransactionsTab: React.FC = () => {
                 </PopoverContent>
               </Popover>
             </div>
-
             <div className="space-y-2">
               <Label>Due Date</Label>
               <Popover>
@@ -115,7 +143,6 @@ const TransactionsTab: React.FC = () => {
                 </PopoverContent>
               </Popover>
             </div>
-
             <Button type="submit" className="w-full">Borrow</Button>
           </form>
         </CardContent>
@@ -137,7 +164,6 @@ const TransactionsTab: React.FC = () => {
                 required
               />
             </div>
-
             <div className="space-y-2">
               <Label>Return Date</Label>
               <Popover>
@@ -157,7 +183,6 @@ const TransactionsTab: React.FC = () => {
                 </PopoverContent>
               </Popover>
             </div>
-
             <Button type="submit" className="w-full">Return</Button>
           </form>
         </CardContent>
