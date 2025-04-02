@@ -33,9 +33,11 @@ The backend is built using Python with SQLite and Flask, while the frontend is d
   _Creating an account is required to access most application functions._
 
 ## Developer Tools
-**Debug Tab:**
+
+- **Debug Tab:**
   A Debug Tab is available in the application interface for markers and TAs. It displays all database tables and allows for real-time viewing of table updates.
 > Note: This feature is implemented solely for development and evaluation purposes and will not be included in the deployed version of the application.
+
 ---
 ## Installation
 
