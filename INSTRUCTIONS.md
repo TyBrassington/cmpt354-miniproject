@@ -17,7 +17,7 @@ Run this in your terminal: `git clone https://github.com/TyBrassington/cmpt354-m
 Run this in your terminal: `cd library-database`
 
 # 4. Install legacy dependencies
-Run this in your terminal: `npm install --legacy-peer-deps`
+Run this in your terminal: `npm install`
 
 # 5. Start the development server
 Run this in your terminal: `npm run dev`
