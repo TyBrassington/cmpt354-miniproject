@@ -11,6 +11,8 @@ This is a full-stack web application designed for managing a library database. T
 - **Volunteer for the library**
 - **Ask for help from a librarian**
 
+**Note:** You will be required to create an account in order to use most functions in the application.
+
 The backend is built using Python with SQLite and Flask, while the frontend is developed using React and Vite.
 
 > **Note:** For detailed installation and setup instructions, please refer to the included [INSTRUCTIONS.md](./INSTRUCTIONS.md) file.
@@ -30,11 +32,9 @@ The backend is built using Python with SQLite and Flask, while the frontend is d
   
 - **User Authentication:**  
   Basic login, logout, and session management via Flask.
+  _Creating an account is required to access most application functions._
 
 ---
-
-## Setup Instructions
-For instructions on installation and startup , see [INSTRUCTIONS.md](./INSTRUCTIONS.md).
 
 ## Prerequisites
 
