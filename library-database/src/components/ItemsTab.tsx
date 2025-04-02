@@ -6,7 +6,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import {
@@ -60,10 +59,8 @@ const ItemsTab: React.FC = () => {
   }
 
   useEffect(() => {
-    // Initial fetch
     fetchItems("")
 
-    // Add event listener for re-fetching items when they are updated
     const handleItemsUpdated = () => {
       fetchItems("")
     }
@@ -164,7 +161,6 @@ return (
                 <DialogDescription>Contribute to our collection</DialogDescription>
               </DialogHeader>
               <form onSubmit={handleDonateSubmit} className="space-y-4">
-                {/* ... donation form fields ... */}
                 <Button type="submit" className="w-full">
                   Donate
                 </Button>

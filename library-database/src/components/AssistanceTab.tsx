@@ -8,14 +8,12 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 const AssistanceTab: React.FC = () => {
-  const [patronID, setPatronID] = useState<string | null>(null)
-
   useEffect(() => {
     fetch("http://localhost:5000/check_session", { credentials: "include" })
       .then((response) => response.json())
       .then((data) => {
         if (data.loggedIn) {
-          setPatronID(data.patronID)
+          console.log("User is logged in with Patron ID:", data.patronID)
         }
       })
       .catch((error) => console.error("Error checking session:", error))

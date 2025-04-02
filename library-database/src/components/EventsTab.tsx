@@ -18,7 +18,6 @@ type Event = {
 }
 
 const EventsTab: React.FC = () => {
-  const [patronID, setPatronID] = useState<string | null>(null)
   const [events, setEvents] = useState<Event[]>([])
   const [searchQuery, setSearchQuery] = useState("")
 
@@ -27,7 +26,7 @@ const EventsTab: React.FC = () => {
       .then((response) => response.json())
       .then((data) => {
         if (data.loggedIn) {
-          setPatronID(data.patronID)
+          console.log("User is logged in with Patron ID:", data.patronID)
         }
       })
       .catch((error) => console.error("Error checking session:", error))
