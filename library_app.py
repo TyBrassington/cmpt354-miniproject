@@ -1,6 +1,7 @@
 import sqlite3
-import datetime
+from datetime import datetime
 import os
+from apscheduler.schedulers.background import BackgroundScheduler
 from flask import Flask, request, jsonify, session
 from flask_cors import CORS
 
@@ -16,6 +17,22 @@ def get_db_connection():
     conn.execute("PRAGMA foreign_keys = ON")  # Enforce foreign key constraints
     conn.row_factory = sqlite3.Row  # lets us use column names
     return conn
+
+def update_fines():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        UPDATE Borrowing_Transaction
+        SET fineAmount = ROUND((julianday('now') - julianday(substr(dueDate, 1, 10))) * 0.30, 2)
+        WHERE returnDate IS NULL AND dueDate < date('now')
+    """)
+    conn.commit()
+    conn.close()
+    print(f"Fines updated at {datetime.now()}")
+
+scheduler = BackgroundScheduler()
+scheduler.add_job(update_fines, 'cron', hour=0, minute=0) # update fines at midnight
+scheduler.start()
 
 # ---------------------- REGISTER PATRON & AUTO LOGIN ----------------------
 @app.route('/register', methods=['POST'])
@@ -166,7 +183,7 @@ def borrow_item():
         conn.close()
         return jsonify({'error': 'Item is not available.'}), 400
     
-    transaction_id = "T" + item_id.lstrip("L") + datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+    transaction_id = "T" + item_id.lstrip("L") + datetime.now().strftime("%Y%m%d%H%M%S")
     
     try:
         cursor.execute("""

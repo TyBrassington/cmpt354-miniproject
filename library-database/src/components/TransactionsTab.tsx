@@ -193,7 +193,7 @@ const TransactionsTab: React.FC = () => {
         <Card>
           <CardHeader>
             <CardTitle>Return an Item</CardTitle>
-            <CardDescription>Process returned materials</CardDescription>
+            <CardDescription>Process returned materials.</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleReturnSubmit} className="space-y-4">
@@ -235,7 +235,7 @@ const TransactionsTab: React.FC = () => {
       <Card>
         <CardHeader>
           <CardTitle>Your Active Transactions</CardTitle>
-          <CardDescription>All your current open transactions</CardDescription>
+          <CardDescription>Please note that all overdue items will be subject to a fine of $0.30/day</CardDescription>
         </CardHeader>
         <CardContent>
           {transactions.length === 0 ? (
@@ -260,7 +260,7 @@ const TransactionsTab: React.FC = () => {
                     <td className="p-2">{tx.borrowDate ? format(new Date(tx.borrowDate), "PPP") : "-"}</td>
                     <td className="p-2">{tx.dueDate ? format(new Date(tx.dueDate), "PPP") : "-"}</td>
                     <td className="p-2">{tx.returnDate ? format(new Date(tx.returnDate), "PPP") : "-"}</td>
-                    <td className="p-2">{tx.fineAmount}</td>
+                    <td className="p-2">{tx.fineAmount ? "$"+tx.fineAmount : "-"}</td>
                   </tr>
                 ))}
               </tbody>
