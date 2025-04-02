@@ -42,8 +42,8 @@ def register():
     last_name = data.get('lastName')
     contact = data.get('contact')
     email = data.get('email')
-    membership_date = datetime.date.today().isoformat()
-
+    membership_date = datetime.now().strftime("%Y%m%d")
+    
     conn = get_db_connection()
     cursor = conn.cursor()
 
