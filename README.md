@@ -1,6 +1,6 @@
 # Library Database Application
 
-This is a full-stack web application designed for managing a library database. The application allows library users to:
+This is a full-stack web application designed for managing a library database for the CMPT354 Database Systems I mini-project. The application allows library users to:
 
 - **Find an item in the library**
 - **Borrow an item from the library**
@@ -43,4 +43,7 @@ The backend is built using Python with SQLite and Flask, while the frontend is d
 
 - **Python:** Version **3.8+** (ensure Python and pip are installed).
 
+## Credits
 
+- Ty Brassington
+- Matin Meraj Mohammadi
