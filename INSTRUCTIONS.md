@@ -43,3 +43,11 @@ to:
 `"postinstall": "python3 -m pip install -r ../requirements.txt",`
 
 `"dev": "concurrently \"vite\" \"cd .. && python3 library_app.py\""`
+
+# Additional notes
+
+Please note that in order to use most functions of the library database, you need to create an account or login. If you dont wish to create an account, login using the following email:
+
+`tybrass@sfu.ca`
+
+This email already has existing transactions and is registered for some events already. Please feel free to play around with the application's features using this account.
