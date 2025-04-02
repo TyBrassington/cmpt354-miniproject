@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import {
@@ -161,10 +162,82 @@ return (
                 <DialogDescription>Contribute to our collection</DialogDescription>
               </DialogHeader>
               <form onSubmit={handleDonateSubmit} className="space-y-4">
-                <Button type="submit" className="w-full">
-                  Donate
-                </Button>
-              </form>
+                  <div className="space-y-2">
+                    <Label htmlFor="title">Item Title</Label>
+                    <Input
+                      id="title"
+                      value={donateItem.title}
+                      onChange={(e) => setDonateItem({ ...donateItem, title: e.target.value })}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="type">Item Type</Label>
+                    <Select
+                      value={donateItem.type}
+                      onValueChange={(value) => setDonateItem({ ...donateItem, type: value })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Book">Book</SelectItem>
+                        <SelectItem value="DVD">DVD</SelectItem>
+                        <SelectItem value="Magazine">Magazine</SelectItem>
+                        <SelectItem value="Other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="genre">Genre</Label>
+                    <Input
+                      id="genre"
+                      value={donateItem.genre}
+                      onChange={(e) => setDonateItem({ ...donateItem, genre: e.target.value })}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="authorArtist">Author/Artist</Label>
+                    <Input
+                      id="authorArtist"
+                      value={donateItem.authorArtist}
+                      onChange={(e) => setDonateItem({ ...donateItem, authorArtist: e.target.value })}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="publisher">Publisher</Label>
+                    <Input
+                      id="publisher"
+                      value={donateItem.publisher}
+                      onChange={(e) => setDonateItem({ ...donateItem, publisher: e.target.value })}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="publicationDate">Publication Date</Label>
+                    <Input
+                      id="publicationDate"
+                      type="date"
+                      value={donateItem.publicationDate}
+                      onChange={(e) => setDonateItem({ ...donateItem, publicationDate: e.target.value })}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="isbnIssn">ISBN/ISSN</Label>
+                    <Input
+                      id="isbnIssn"
+                      value={donateItem.isbnIssn}
+                      onChange={(e) => setDonateItem({ ...donateItem, isbnIssn: e.target.value })}
+                      required
+                    />
+                  </div>
+                  <Button type="submit" className="w-full">
+                    Donate
+                  </Button>
+                </form>
             </DialogContent>
           </Dialog>
         </div>
