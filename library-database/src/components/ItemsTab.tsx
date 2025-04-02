@@ -42,6 +42,7 @@ const ItemsTab: React.FC = () => {
     isbnIssn: ""
   })
   const [libraryItemsData, setLibraryItemsData] = useState<LibraryItem[]>([])
+  const [donateDialogOpen, setDonateDialogOpen] = useState(false);
 
   const fetchItems = async (keyword = "") => {
     try {
@@ -98,6 +99,7 @@ const ItemsTab: React.FC = () => {
       if (response.ok) {
         alert(`Donation successful: ${result.message}`)
         fetchItems("")
+        setDonateDialogOpen(false)
       } else {
         alert(`Donation failed: ${result.error}`)
       }
@@ -152,9 +154,9 @@ return (
               </div>
             </div>
           </form>
-          <Dialog>
+          <Dialog open={donateDialogOpen} onOpenChange={setDonateDialogOpen}>
             <DialogTrigger asChild>
-              <Button>Donate an Item</Button>
+              <Button onClick={() => setDonateDialogOpen(true)}>Donate an Item</Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
