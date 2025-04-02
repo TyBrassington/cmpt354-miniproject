@@ -33,6 +33,7 @@ This command executes two processes:
 If you experience issues with the Python command on macOS or Linux, modify the `package.json` file in the `library-database` directory:
 Open `package.json` and locate the **scripts** section.
 Change the dev and predev scripts from:
+
 `"predev": "py -m pip install -r ../requirements.txt",`
 
 `"dev": "concurrently \"vite\" \"cd .. && py library_app.py\""`
