@@ -43,7 +43,7 @@ def register():
     contact = data.get('contact')
     email = data.get('email')
     membership_date = datetime.now().strftime("%Y%m%d")
-    
+
     conn = get_db_connection()
     cursor = conn.cursor()
 
@@ -440,7 +440,7 @@ def ask_help():
     cursor.execute("SELECT COUNT(*) FROM Help_Request")
     count = cursor.fetchone()[0]
     request_id = f"HR{count + 1:03d}"
-    request_date = datetime.datetime.now().strftime("%Y-%m-%d")
+    request_date = datetime.now().strftime("%Y-%m-%d")
     
     try:
         cursor.execute("""
