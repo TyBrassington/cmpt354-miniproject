@@ -34,8 +34,11 @@ If you experience issues with the Python command on macOS or Linux, modify the `
 Open `package.json` and locate the **scripts** section.
 Change the dev and predev scripts from:
 `"predev": "py -m pip install -r ../requirements.txt",`
+
 `"dev": "concurrently \"vite\" \"cd .. && py library_app.py\""`
 
 to:
+
 `"predev": "python3 -m pip install -r ../requirements.txt",`
+
 `"dev": "concurrently \"vite\" \"cd .. && python3 library_app.py\""`
