@@ -456,5 +456,35 @@ def ask_help():
     conn.close()
     return jsonify({'message': 'Help request submitted successfully', 'requestID': request_id}), 200
 
+# ---------------------- DEBUG ENDPOINTS ----------------------
+
+@app.route('/debug_tables', methods=['GET'])
+def debug_tables():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;")
+    tables = [row[0] for row in cursor.fetchall()]
+    conn.close()
+    return jsonify(tables), 200
+
+@app.route('/debug_table_data', methods=['GET'])
+def debug_table_data():
+    table_name = request.args.get('table')
+    if not table_name:
+        return jsonify({'error': 'Table parameter is required'}), 400
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute(f"SELECT * FROM {table_name}")
+        rows = cursor.fetchall()
+        columns = [desc[0] for desc in cursor.description]
+        data = [dict(row) for row in rows]
+    except Exception as e:
+        conn.close()
+        return jsonify({'error': str(e)}), 400
+    conn.close()
+    return jsonify({'columns': columns, 'data': data}), 200
+
+
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
