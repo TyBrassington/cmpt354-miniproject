@@ -14,13 +14,6 @@ import AssistanceTab from "@/components/AssistanceTab"
 const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState("home")
 
-
-  const upcomingEvents = [
-    { id: "E001", title: "Book Club Meeting", date: "April 15, 2025", time: "6:00 PM", location: "Main Hall" },
-    { id: "E002", title: "Children's Story Time", date: "April 10, 2025", time: "10:00 AM", location: "Children's Section" },
-    { id: "E003", title: "Author Meet & Greet", date: "April 22, 2025", time: "7:00 PM", location: "Conference Room" },
-  ]
-
   return (
     <ThemeProvider defaultTheme="dark" storageKey="library-ui-theme">
       <div className="min-h-screen bg-background text-foreground">
@@ -36,7 +29,7 @@ const App: React.FC = () => {
             </TabsList>
 
             <TabsContent value="home">
-              <HomeTab setActiveTab={setActiveTab} upcomingEvents={upcomingEvents.slice(0, 2)} />
+              <HomeTab setActiveTab={setActiveTab}/>
             </TabsContent>
 
             <TabsContent value="items">
@@ -48,7 +41,7 @@ const App: React.FC = () => {
             </TabsContent>
 
             <TabsContent value="events">
-              <EventsTab upcomingEvents={upcomingEvents} />
+              <EventsTab />
             </TabsContent>
 
             <TabsContent value="assistance">

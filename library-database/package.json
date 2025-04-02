@@ -4,8 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-  "predev": "python -m pip install -r ../requirements.txt",
-  "dev": "concurrently \"vite\" \"cd .. && python library_app.py\"",
+  "predev": "npm install concurrently --save-dev && npm py -m pip install -r ../requirements.txt",
+  "dev": "concurrently \"vite\" \"cd .. && py library_app.py\"",
   "build": "tsc -b && vite build",
   "lint": "eslint .",
   "preview": "vite preview"

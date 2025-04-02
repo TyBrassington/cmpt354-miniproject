@@ -281,22 +281,163 @@ def donate_item():
     return jsonify({'message': f'Item "{title}" donated successfully with ID {next_itemID}'}), 200
 
 
-# ---------------------- PLACEHOLDER ENDPOINTS ----------------------
+# ---------------------- FIND EVENT ----------------------
 @app.route('/find_event', methods=['GET'])
 def find_event():
-    return jsonify({'message': 'find_event endpoint not implemented yet'}), 200
+    keyword = request.args.get('keyword', '')
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    if keyword.strip() == "":
+        cursor.execute("""
+            SELECT e.*, (SELECT COUNT(*) FROM Event_Attendance WHERE eventID = e.eventID) as attendeeCount
+            FROM Event e
+        """)
+    else:
+        cursor.execute("""
+            SELECT e.*, (SELECT COUNT(*) FROM Event_Attendance WHERE eventID = e.eventID) as attendeeCount
+            FROM Event e
+            WHERE eventName LIKE ? OR recommendedAudience LIKE ? OR recommendedAudience LIKE 'All'
+        """, (f'%{keyword}%', f'%{keyword}%'))
+        
+    rows = cursor.fetchall()
+    conn.close()
+    
+    events = []
+    for row in rows:
+        events.append({
+            "id": row["eventID"],
+            "title": row["eventName"],
+            "date": row["eventDate"],
+            "time": row["startTime"],
+            "location": row["location"],
+            "recommendedAudience": row["recommendedAudience"],
+            "attendeeCount": row["attendeeCount"]
+        })
+    return jsonify(events), 200
 
+
+# ---------------------- REGISTER FOR AN EVENT ----------------------
 @app.route('/register_event', methods=['POST'])
 def register_event():
-    return jsonify({'message': 'register_event endpoint not implemented yet'}), 200
+    data = request.get_json()
+    patron_id = data.get('patronID')
+    event_id = data.get('eventID')
+    
+    if not patron_id or not event_id:
+        return jsonify({'error': 'Missing patronID or eventID'}), 400
 
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    cursor.execute("SELECT * FROM Patron WHERE patronID = ?", (patron_id,))
+    if not cursor.fetchone():
+        conn.close()
+        return jsonify({'error': 'Patron not found. Please register first.'}), 400
+    
+    cursor.execute("SELECT * FROM Event WHERE eventID = ?", (event_id,))
+    if not cursor.fetchone():
+        conn.close()
+        return jsonify({'error': 'Event not found.'}), 400
+    
+    cursor.execute("SELECT * FROM Event_Attendance WHERE eventID = ? AND patronID = ?", (event_id, patron_id))
+    if cursor.fetchone():
+        conn.close()
+        return jsonify({'error': 'Already registered for this event.'}), 400
+
+    cursor.execute("SELECT COUNT(*) FROM Event_Attendance")
+    count = cursor.fetchone()[0]
+    attendance_id = f"EA{count + 1:03d}"
+    
+    try:
+        cursor.execute("""
+            INSERT INTO Event_Attendance (attendanceID, eventID, patronID)
+            VALUES (?, ?, ?)
+        """, (attendance_id, event_id, patron_id))
+        conn.commit()
+    except Exception as e:
+        conn.rollback()
+        conn.close()
+        return jsonify({'error': str(e)}), 400
+    
+    conn.close()
+    return jsonify({'message': 'Successfully registered for the event', 'attendanceID': attendance_id}), 200
+
+# ---------------------- VOLUNTEER ----------------------
 @app.route('/volunteer', methods=['POST'])
 def volunteer():
-    return jsonify({'message': 'volunteer endpoint not implemented yet'}), 200
+    data = request.get_json()
+    patron_id = data.get('patronID')
+    interest_area = data.get('interestArea')
+    availability = data.get('availability')
+    message_text = data.get('message', '')
+    
+    if not patron_id or not interest_area or not availability:
+        return jsonify({'error': 'Missing required fields (patronID, interestArea, availability)'}), 400
 
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    cursor.execute("SELECT * FROM Patron WHERE patronID = ?", (patron_id,))
+    if not cursor.fetchone():
+        conn.close()
+        return jsonify({'error': 'Patron not found. Please register first.'}), 400
+    
+    cursor.execute("SELECT COUNT(*) FROM Volunteer_Request")
+    count = cursor.fetchone()[0]
+    request_id = f"VR{count + 1:03d}"
+    
+    try:
+        cursor.execute("""
+            INSERT INTO Volunteer_Request (requestID, patronID, interestArea, availability, message)
+            VALUES (?, ?, ?, ?, ?)
+        """, (request_id, patron_id, interest_area, availability, message_text))
+        conn.commit()
+    except Exception as e:
+        conn.rollback()
+        conn.close()
+        return jsonify({'error': str(e)}), 400
+    
+    conn.close()
+    return jsonify({'message': 'Volunteer request submitted successfully', 'requestID': request_id}), 200
+
+# ---------------------- ASK FOR HELP ----------------------
 @app.route('/ask_help', methods=['POST'])
 def ask_help():
-    return jsonify({'message': 'ask_help endpoint not implemented yet'}), 200
+    data = request.get_json()
+    patron_id = data.get('patronID')
+    topic = data.get('topic')
+    message_text = data.get('message', '')
+    
+    if not patron_id or not topic:
+        return jsonify({'error': 'Missing required fields (patronID, topic)'}), 400
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    cursor.execute("SELECT * FROM Patron WHERE patronID = ?", (patron_id,))
+    if not cursor.fetchone():
+        conn.close()
+        return jsonify({'error': 'Patron not found. Please register first.'}), 400
+
+    cursor.execute("SELECT COUNT(*) FROM Help_Request")
+    count = cursor.fetchone()[0]
+    request_id = f"HR{count + 1:03d}"
+    request_date = datetime.datetime.now().strftime("%Y-%m-%d")
+    
+    try:
+        cursor.execute("""
+            INSERT INTO Help_Request (requestID, patronID, topic, message, requestDate)
+            VALUES (?, ?, ?, ?, ?)
+        """, (request_id, patron_id, topic, message_text, request_date))
+        conn.commit()
+    except Exception as e:
+        conn.rollback()
+        conn.close()
+        return jsonify({'error': str(e)}), 400
+
+    conn.close()
+    return jsonify({'message': 'Help request submitted successfully', 'requestID': request_id}), 200
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

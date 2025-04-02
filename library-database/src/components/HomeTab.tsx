@@ -1,7 +1,14 @@
 "use client"
 
-import React from "react"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import React, { useEffect, useState } from "react"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 
 type Event = {
@@ -14,10 +21,38 @@ type Event = {
 
 interface HomeTabProps {
   setActiveTab: (value: string) => void
-  upcomingEvents: Event[]
 }
 
-const HomeTab: React.FC<HomeTabProps> = ({ setActiveTab, upcomingEvents }) => {
+const HomeTab: React.FC<HomeTabProps> = ({ setActiveTab }) => {
+  const [events, setEvents] = useState<Event[]>([])
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/find_event", {
+          credentials: "include",
+        })
+        if (response.ok) {
+          const data = await response.json()
+          const simplified = data.map((event: any) => ({
+            id: event.id,
+            title: event.title,
+            date: event.date,
+            time: event.time,
+            location: event.location,
+          }))
+          setEvents(simplified.slice(0, 2))
+        } else {
+          console.error("Failed to fetch events")
+        }
+      } catch (error) {
+        console.error("Error fetching events:", error)
+      }
+    }
+
+    fetchEvents()
+  }, [])
+
   return (
     <div className="grid md:grid-cols-2 gap-6">
       <Card>
@@ -43,19 +78,25 @@ const HomeTab: React.FC<HomeTabProps> = ({ setActiveTab, upcomingEvents }) => {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {upcomingEvents.map((event) => (
-              <div key={event.id} className="border-b pb-2">
-                <h3 className="font-medium">{event.title}</h3>
-                <p className="text-sm text-muted-foreground">
-                  {event.date} at {event.time}
-                </p>
-                <p className="text-sm text-muted-foreground">Location: {event.location}</p>
-              </div>
-            ))}
+            {events.length === 0 ? (
+              <p className="text-sm text-muted-foreground">No upcoming events.</p>
+            ) : (
+              events.map((event) => (
+                <div key={event.id} className="border-b pb-2">
+                  <h3 className="font-medium">{event.title}</h3>
+                  <p className="text-sm text-muted-foreground">
+                    {event.date} at {event.time}
+                  </p>
+                  <p className="text-sm text-muted-foreground">Location: {event.location}</p>
+                </div>
+              ))
+            )}
           </div>
         </CardContent>
         <CardFooter>
-          <Button variant="outline" onClick={() => setActiveTab("events")}>View All Events</Button>
+          <Button variant="outline" onClick={() => setActiveTab("events")}>
+            View All Events
+          </Button>
         </CardFooter>
       </Card>
     </div>
