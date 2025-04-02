@@ -15,8 +15,6 @@ This is a full-stack web application designed for managing a library database fo
 
 The backend is built using Python with SQLite and Flask, while the frontend is developed using React and Vite.
 
-> **Note:** For detailed installation and setup instructions, please refer to the included [INSTRUCTIONS.md](./INSTRUCTIONS.md) file.
-
 ---
 
 ## Features
@@ -35,6 +33,9 @@ The backend is built using Python with SQLite and Flask, while the frontend is d
   _Creating an account is required to access most application functions._
 
 ---
+## Installation
+
+For detailed installation and setup instructions, please refer to the included [INSTRUCTIONS.md](./INSTRUCTIONS.md) file.
 
 ## Prerequisites
 
