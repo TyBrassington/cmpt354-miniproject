@@ -75,6 +75,7 @@ const EventsTab: React.FC = () => {
       const data = await response.json()
       if (response.ok) {
         alert(`Successfully registered! Attendance ID: ${data.attendanceID}`)
+        fetchEvents(searchQuery);
       } else {
         alert(data.error)
       }
