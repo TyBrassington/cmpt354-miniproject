@@ -188,11 +188,18 @@ def borrow_item():
     try:
         cursor.execute("""
             INSERT INTO Borrowing_Transaction (transactionID, patronID, itemID, borrowDate, dueDate, returnDate, fineAmount)
-            VALUES (?, ?, ?, ?, ?, NULL, 0.00)
+            VALUES (?, ?, ?, ?, ?, NULL, NULL)
         """, (transaction_id, patron_id, item_id, borrow_date, due_date))
         cursor.execute("""
             UPDATE Library_Item SET availabilityStatus = 'Borrowed' WHERE itemID = ?
         """, (item_id,))
+        
+        cursor.execute("""
+            UPDATE Borrowing_Transaction
+            SET fineAmount = ROUND((julianday('now') - julianday(substr(dueDate, 1, 10))) * 0.30, 2)
+            WHERE transactionID = ? AND returnDate IS NULL AND dueDate < date('now')
+        """, (transaction_id,))
+        
         conn.commit()
     except Exception as e:
         conn.rollback()
@@ -201,6 +208,7 @@ def borrow_item():
         
     conn.close()
     return jsonify({'message': 'Item successfully borrowed', 'transactionId': transaction_id}), 200
+
 
 # ---------------------- RETURN ITEM ----------------------
 @app.route('/return_item', methods=['POST'])
