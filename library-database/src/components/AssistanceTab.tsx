@@ -28,7 +28,17 @@ const AssistanceTab: React.FC = () => {
   const [helpData, setHelpData] = useState({
     topic: "",
     message: "",
+    personnelID: "",
   })
+
+  const [personnelList, setPersonnelList] = useState<any[]>([])
+
+  useEffect(() => {
+    fetch("http://localhost:5000/get_personnel")
+      .then((res) => res.json())
+      .then((data) => setPersonnelList(data))
+      .catch((err) => console.error("Error fetching personnel:", err))
+  }, [])
 
   const handleVolunteerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setVolunteerData({ ...volunteerData, [e.target.id]: e.target.value })
@@ -45,6 +55,11 @@ const AssistanceTab: React.FC = () => {
   const handleHelpSelect = (value: string) => {
     setHelpData({ ...helpData, topic: value })
   }
+  
+  const handleStaffSelect = (value: string) => {
+    setHelpData({ ...helpData, personnelID: value })
+  }
+  
 
   const handleVolunteerSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -102,7 +117,7 @@ const AssistanceTab: React.FC = () => {
       const data = await response.json()
       if (response.ok) {
         alert(`Help request submitted successfully. Request ID: ${data.requestID}`)
-        setHelpData({ topic: "", message: "" })
+        setHelpData({ topic: "", message: "", personnelID: "" })
       } else {
         alert(data.error)
       }
@@ -191,7 +206,21 @@ const AssistanceTab: React.FC = () => {
                 required
               />
             </div>
-            <div className="h-[58px]"/>
+            <div className="space-y-2">
+              <Label>Select a Staff Member to help you</Label>
+              <Select onValueChange={handleStaffSelect} value={helpData.personnelID}>
+                <SelectTrigger>
+                  <SelectValue placeholder="(optional) Select staff" />
+                </SelectTrigger>
+                <SelectContent>
+                  {personnelList.map((person) => (
+                    <SelectItem key={person.personnelID} value={person.personnelID}>
+                      {person.firstName} {person.lastName}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
             <Button type="submit" className="w-full">Submit Request</Button>
           </form>
         </CardContent>

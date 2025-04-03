@@ -453,28 +453,35 @@ def ask_help():
     patron_id = data.get('patronID')
     topic = data.get('topic')
     message_text = data.get('message', '')
-    
+    personnel_id = data.get('personnelID')  # new
+
     if not patron_id or not topic:
         return jsonify({'error': 'Missing required fields (patronID, topic)'}), 400
 
     conn = get_db_connection()
     cursor = conn.cursor()
-    
+
     cursor.execute("SELECT * FROM Patron WHERE patronID = ?", (patron_id,))
     if not cursor.fetchone():
         conn.close()
         return jsonify({'error': 'Patron not found. Please register first.'}), 400
 
+    if personnel_id:
+        cursor.execute("SELECT * FROM Personnel WHERE personnelID = ?", (personnel_id,))
+        if not cursor.fetchone():
+            conn.close()
+            return jsonify({'error': 'Personnel not found.'}), 400
+
     cursor.execute("SELECT COUNT(*) FROM Help_Request")
     count = cursor.fetchone()[0]
     request_id = f"HR{count + 1:03d}"
     request_date = datetime.now().strftime("%Y-%m-%d")
-    
+
     try:
         cursor.execute("""
-            INSERT INTO Help_Request (requestID, patronID, topic, message, requestDate)
-            VALUES (?, ?, ?, ?, ?)
-        """, (request_id, patron_id, topic, message_text, request_date))
+            INSERT INTO Help_Request (requestID, patronID, topic, message, requestDate, personnelID)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, (request_id, patron_id, topic, message_text, request_date, personnel_id))
         conn.commit()
     except Exception as e:
         conn.rollback()
@@ -483,6 +490,25 @@ def ask_help():
 
     conn.close()
     return jsonify({'message': 'Help request submitted successfully', 'requestID': request_id}), 200
+
+# ---------------------- GET PERSONNEL ----------------------
+@app.route('/get_personnel', methods=['GET'])
+def get_personnel():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT personnelID, firstName, lastName FROM Personnel")
+    rows = cursor.fetchall()
+    conn.close()
+
+    data = []
+    for row in rows:
+        data.append({
+            'personnelID': row['personnelID'],
+            'firstName': row['firstName'],
+            'lastName': row['lastName']
+        })
+
+    return jsonify(data), 200
 
 # ---------------------- DEBUG ENDPOINTS ----------------------
 
