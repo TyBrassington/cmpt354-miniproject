@@ -360,20 +360,39 @@ def register_event():
         conn.close()
         return jsonify({'error': 'Patron not found. Please register first.'}), 400
     
-    cursor.execute("SELECT * FROM Event WHERE eventID = ?", (event_id,))
-    if not cursor.fetchone():
+    cursor.execute("SELECT location FROM Event WHERE eventID = ?", (event_id,))
+    event_row = cursor.fetchone()
+    if not event_row:
         conn.close()
         return jsonify({'error': 'Event not found.'}), 400
-    
+
+    room_id = event_row['location']
+
+    cursor.execute("SELECT capacity FROM Room WHERE roomID = ?", (room_id,))
+    room_info = cursor.fetchone()
+    if not room_info:
+        conn.close()
+        return jsonify({'error': 'No matching room found for this event.'}), 400
+
+    capacity = room_info['capacity']
+
+    cursor.execute("SELECT COUNT(*) AS currentCount FROM Event_Attendance WHERE eventID = ?", (event_id,))
+    count_row = cursor.fetchone()
+    current_count = count_row['currentCount']
+
+    if current_count >= capacity:
+        conn.close()
+        return jsonify({'error': 'This event is already at full capacity.'}), 400
+
     cursor.execute("SELECT * FROM Event_Attendance WHERE eventID = ? AND patronID = ?", (event_id, patron_id))
     if cursor.fetchone():
         conn.close()
         return jsonify({'error': 'Already registered for this event.'}), 400
 
     cursor.execute("SELECT COUNT(*) FROM Event_Attendance")
-    count = cursor.fetchone()[0]
-    attendance_id = f"EA{count + 1:03d}"
-    
+    total_attendance = cursor.fetchone()[0]
+    attendance_id = f"EA{total_attendance + 1:03d}"
+
     try:
         cursor.execute("""
             INSERT INTO Event_Attendance (attendanceID, eventID, patronID)
@@ -387,6 +406,7 @@ def register_event():
     
     conn.close()
     return jsonify({'message': 'Successfully registered for the event', 'attendanceID': attendance_id}), 200
+
 
 # ---------------------- VOLUNTEER ----------------------
 @app.route('/volunteer', methods=['POST'])
